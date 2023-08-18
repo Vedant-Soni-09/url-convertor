@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Url Converter by @DE3P4K07</title>
+    <script>
+
+        function toggleOverlay() {
+            var overlay = document.getElementById("overlay");
+            overlay.style.display = (overlay.style.display === "block") ? "none" : "block";
+        }
+
+        function convertURL() {
+            
+            var inputURL = document.getElementById("inputURL").value;
+            toggleOverlay();
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/", true); // Sending the request to the same route "/"
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var convertedURL = document.getElementById("convertedURL");
+                    convertedURL.value = response.result;
+                    
+                    // Hide loading overlay
+                    toggleOverlay();
+                }
+            };
+            xhr.send("link=" + encodeURIComponent(inputURL));
+        }
+
+        function clearFields() {
+            document.getElementById("inputURL").value = "";
+            document.getElementById("convertedURL").value = "";
+        }
+
+        function copyToClipboard() {
+            var convertedURL = document.getElementById("convertedURL");
+            convertedURL.select();
+            document.execCommand("copy");
+            showCopiedMessage();
+        }
+
+        function showCopiedMessage() {
+            var copiedMessage = document.getElementById("copiedMessage");
+            copiedMessage.style.display = "block";
+            setTimeout(function() {
+                copiedMessage.style.display = "none";
+            }, 2000); // Display for 2 seconds
+        }
+    </script>
+</head>
+<body>
+    <div class="overlay" id="overlay">
+        <div class="loading-container">
+            <img src="{{ url_for('static', filename='images/loading.gif') }}" class="loading-icon" alt="Loading...">
+        </div>
+    </div>
+
+    <div class="card">
+        <h1>URL CONVERTER</h1>
+        <form>
+            <label for="inputURL">Enter URL:</label>
+            <br><br>
+            <input type="text" id="inputURL" name="inputURL" placeholder="https://example.com" style="word-wrap: break-word;">
+            <br>
+            <button type="button" class="convert" onclick="convertURL()">Convert</button>
+            <button type="button" class="clear" onclick="clearFields()">Clear</button>
+        </form>
+
+        <br>
+
+        <label for="convertedURL">Converted URL:</label>
+        <input type="text" id="convertedURL" name="convertedURL" readonly>
+        <button type="button" class="copy" onclick="copyToClipboard()">Copy to Clipboard</button>
+        <div id="copiedMessage" style="display: none;">Link has been copied!</div>
+    </div>
+    <footer class="footer">
+        <p>Thanks to <a href="https://t.me/LuCiFeR_69_69">VEDANT</a> for helping in this project.</p>
+        <a href="https://linktr.ee/deepaksinghmalik">linktr.ee/deepaksinghmalik</a>
+    </footer>
+</body>
+</html>
